@@ -1,12 +1,4 @@
-
-function createElement(tag, className) {
-    const element = document.createElement(tag)
-    element.classList.add(className)
-
-    return element
-}
-
-class Video {
+export default class Video {
     constructor() {
         this.mediaSource = new MediaSource();
 
@@ -146,7 +138,3 @@ class Video {
         this.video.currentTime = currentTime
     }
 }
-
-document.addEventListener("DOMContentLoaded", function (event) {
-    window.video = new Video()
-})
