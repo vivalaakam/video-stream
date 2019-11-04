@@ -4,8 +4,6 @@ import PIP from './pip'
 export default class Video {
     constructor() {
         this.mediaSource = new MediaSource();
-
-        this.run = this.run.bind(this)
         this.currentChunk = 0
         this.init()
     }
@@ -20,7 +18,6 @@ export default class Video {
         this.action = this.wrapper.querySelector('.action')
 
         this.pip = new PIP(this.wrapper)
-
         this.fullscreen = new Fullscreen(this.wrapper)
 
         this.mediaSource.addEventListener('sourceopen', this.run, { once: true })
@@ -28,25 +25,12 @@ export default class Video {
         const url = URL.createObjectURL(this.mediaSource)
         this.video.src = url;
 
-        this.video.addEventListener("timeupdate", (e) => {
-            this.progress.style.width = `${(this.currentTime * 100) / (this.currentChunk * 2)}%`
-        })
-
-        this.totalProgress.addEventListener("click", (e) => {
-            console.log("click", e.offsetX, this.totalProgress.offsetWidth)
-            this.currentTime = ((this.currentChunk * 2) * e.offsetX) / this.totalProgress.offsetWidth
-        })
-
-        this.action.addEventListener("click", () => {
-            if (this._playing) {
-                this.pause()
-            } else {
-                this.play()
-            }
-        })
+        this.video.addEventListener("timeupdate", this.timeUpdate)
+        this.action.addEventListener("click", this.onClickAction)
+        this.totalProgress.addEventListener("click", this.onClickProgress)
     }
 
-    run() {
+    run = () => {
         this.sourceBuffer = this.mediaSource
             .addSourceBuffer('video/mp4; codecs="avc1.4d401f, mp4a.40.2"');
 
@@ -94,6 +78,24 @@ export default class Video {
         this.video.pause()
         this._playing = false
         this.action.classList.remove("in_progress")
+    }
+
+    timeUpdate = () => {
+        this.progress.style.width = `${(this.currentTime * 100) / (this.currentChunk * 2)}%`
+    }
+
+    onClickProgress = (e) => {
+        e.stopImmediatePropagation()
+        this.currentTime = ((this.currentChunk * 2) * e.offsetX) / this.totalProgress.offsetWidth
+    }
+
+    onClickAction = (e) => {
+        e.stopImmediatePropagation()
+        if (this._playing) {
+            this.pause()
+        } else {
+            this.play()
+        }
     }
 
     get currentTime() {
