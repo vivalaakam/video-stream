@@ -7,14 +7,14 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'source')))
 
 if (process.env.NODE_ENV === 'production') {
-	app.use('/build', express.static('build'))
+	app.use('/', express.static('public'))
 } else {
 	const proxy = require('express-http-proxy')
 	app.use(
-		'/build',
-		proxy('http://localhost:3001/build', {
+		'/',
+		proxy('http://localhost:3001/', {
 			proxyReqPathResolver: req =>
-				'http://localhost:3001/build' + req.url,
+				'http://localhost:3001/' + req.url,
 		})
 	)
 

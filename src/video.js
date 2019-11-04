@@ -1,3 +1,6 @@
+import Fullscreen from './fullscreen'
+import PIP from './pip'
+
 export default class Video {
     constructor() {
         this.mediaSource = new MediaSource();
@@ -16,24 +19,16 @@ export default class Video {
         this.totalProgress = this.wrapper.querySelector('.progress')
         this.action = this.wrapper.querySelector('.action')
 
-        this.pip = this.wrapper.querySelector('.pip')
+        this.pip = new PIP(this.wrapper)
 
-        this.fullscreen = this.wrapper.querySelector('.fullscreen')
+        this.fullscreen = new Fullscreen(this.wrapper)
 
         this.mediaSource.addEventListener('sourceopen', this.run, { once: true })
 
         const url = URL.createObjectURL(this.mediaSource)
         this.video.src = url;
 
-        this.video.addEventListener("progress", (e) => {
-            for (let i = 0; i < this.video.buffered.length; i += 1) {
-                console.log("progress", this.currentChunk, this.video.buffered.start(i), this.video.buffered.end(i))
-            }
-        })
-
         this.video.addEventListener("timeupdate", (e) => {
-            console.log("timeupdate", this.currentTime)
-
             this.progress.style.width = `${(this.currentTime * 100) / (this.currentChunk * 2)}%`
         })
 
@@ -45,41 +40,10 @@ export default class Video {
         this.action.addEventListener("click", () => {
             if (this._playing) {
                 this.pause()
-                this.action.innerText = 'Play'
             } else {
                 this.play()
-                this.action.innerText = 'Pause'
             }
         })
-
-        if ('pictureInPictureEnabled' in document) {
-            this.pip.hidden = false
-
-            this.pip.addEventListener('click', (event) => {
-                if (this.video !== document.pictureInPictureElement) {
-                    this.video.requestPictureInPicture();
-                } else {
-                    document.exitPictureInPicture();
-                }
-            });
-        } else {
-            this.pip.hidden = true
-        }
-
-        if ('fullscreenEnabled' in document) {
-            this.fullscreen.hidden = false
-
-            this.fullscreen.addEventListener('click', (event) => {
-                if (this.wrapper !== document.fullscreenElement) {
-                    this.wrapper.requestFullscreen()
-                } else {
-                    document.cancelFullScreen()
-                }
-            });
-
-        } else {
-            this.fullscreen.hidden = true
-        }
     }
 
     run() {
@@ -123,11 +87,13 @@ export default class Video {
     play() {
         this.video.play()
         this._playing = true
+        this.action.classList.add("in_progress")
     }
 
     pause() {
         this.video.pause()
         this._playing = false
+        this.action.classList.remove("in_progress")
     }
 
     get currentTime() {
