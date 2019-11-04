@@ -9,7 +9,8 @@
     "dev": "webpack-dev-server"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "fbemitter": "^2.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
