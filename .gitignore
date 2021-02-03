@@ -1,3 +1,4 @@
-/node_modules
-/source/source.mp4
-/public/*
+node_modules
+source/source.mp4
+public/*
+.idea

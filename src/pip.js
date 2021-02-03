@@ -8,7 +8,6 @@ export default class PIP {
         } else {
             this.pip.addEventListener('click', this.onClick);
             video.addEventListener('enterpictureinpicture', this.enterPictureTopicture)
-
             video.addEventListener('leavepictureinpicture', this.leavePictureTopicture)
         }
 
